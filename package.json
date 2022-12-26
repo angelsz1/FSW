@@ -1,0 +1,24 @@
+{
+  "name": "fsw",
+  "version": "1.0.0",
+  "description": "A CLI tool to watch a directory for changes.",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Angel Szust",
+  "license": "ISC",
+  "keywords": [
+    "cli"
+  ],
+  "bin": {
+    "fsw": "./bin/index.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "chokidar": "^3.5.3",
+    "daemonize2": "^0.4.2",
+    "figlet": "^1.5.2",
+    "yargs": "^16.1.1"
+  }
+}
