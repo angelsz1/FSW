@@ -31,14 +31,8 @@ const watchPath = require("os").homedir() + "/fsw/pathToWatch";
 var pid = ""
 //check arguments
 
-//define the logpath location and erase its content
+//define the logpath location 
 const logPath = require("os").homedir() + "/fsw/log.txt"
-
-fs.writeFileSync(logPath, "", (err) => {
-    if (err)
-        console.log(err)
-    return;
-})
 
 
 if (argv.e || argv.end) {
@@ -65,22 +59,19 @@ if (argv.e || argv.end) {
 }
 
 if (argv.l || argv.list) {
-    const txt = fs.readFileSync(logPath);
+    const txt = fs.readFileSync(logPath)
 
-    if (fs.existsSync(watchPath)) {
-        console.log("Currently watched : ")
-        console.log(txt.toString())
-        console.log("Still watching...")
+    if (txt.toString() == "") {
+        console.log("The log file is empty.")
     }
     else {
-        if (txt.toString() == "")
-            console.log("The last execution didn't watch anything happen.")
-        else {
-            console.log("The last execution of fsw watched this changes:")
-            console.log(txt.toString())
+        console.log("The log file has :")
+        console.log(txt.toString())
+        if (fs.existsSync(watchPath)) {
+            console.log("Still watching..")
         }
     }
-    process.exit(0);
+    process.exit()
 }
 
 const directory = argv.d || argv.directory
@@ -123,6 +114,12 @@ if (directory == "") {
 if (!fs.existsSync(require("os").homedir() + "/fsw"))
     fs.mkdir(require("os").homedir() + "/fsw", () => console.log("fsw dir created"));
 
+
+fs.writeFileSync(logPath, "", (err) => {
+    if (err)
+        console.log(err)
+    return;
+})
 
 
 //initialize the watcher
