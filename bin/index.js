@@ -18,6 +18,7 @@ const options = yargs
     .option("d", { alias: "directory", describe: "Directory to watch", type: "string", demandOption: false })
     .option("e", { alias: "end", describe: "Use to stop watching", demandOption: false })
     .option("s", { alias: "status", describe: "Know if you're already watching a directory and which is it.", demandOption: false })
+    .option("l", { alias: "list", describe: "List the changes recorded so far.", demandOption: false })
     .help(true)
     .version(false)
     .argv;
@@ -30,17 +31,56 @@ const watchPath = require("os").homedir() + "/fsw/pathToWatch";
 var pid = ""
 //check arguments
 
+//define the logpath location and erase its content
+const logPath = require("os").homedir() + "/fsw/log.txt"
+
+fs.writeFileSync(logPath, "", (err) => {
+    if (err)
+        console.log(err)
+    return;
+})
+
+
 if (argv.e || argv.end) {
     try {
         pid = fs.readFileSync(pidPath);
         kill(pid, "SIGTERM");
         console.log("Stopped watching...")
-        fs.rmSync(pidPath);
-        fs.rmSync(watchPath);
+        fs.rm(pidPath, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            return;
+        });
+        fs.rm(watchPath, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            return;
+        });
     } catch (exception) {
         console.log("No monitoring process is running");
     }
     return;
+}
+
+if (argv.l || argv.list) {
+    const txt = fs.readFileSync(logPath);
+
+    if (fs.existsSync(watchPath)) {
+        console.log("Currently watched : ")
+        console.log(txt.toString())
+        console.log("Still watching...")
+    }
+    else {
+        if (txt.toString() == "")
+            console.log("The last execution didn't watch anything happen.")
+        else {
+            console.log("The last execution of fsw watched this changes:")
+            console.log(txt.toString())
+        }
+    }
+    process.exit(0);
 }
 
 const directory = argv.d || argv.directory
@@ -73,24 +113,15 @@ if (directory == null) {
     process.exit(1);
 }
 
+if (directory == "") {
+    console.log("You need to enter a directory to watch.\nFor more information, run fsw --help.");
+    process.exit(1);
+}
+
 
 //create fsw directory in home in case it isnt already created
 if (!fs.existsSync(require("os").homedir() + "/fsw"))
     fs.mkdir(require("os").homedir() + "/fsw", () => console.log("fsw dir created"));
-
-
-
-//define the logpath location and erase its content
-const logPath = require("os").homedir() + "/fsw/log.txt"
-
-fs.writeFileSync(logPath, "", (err) => {
-    if (err)
-        console.log(err)
-    return;
-})
-
-// write the path in the watchPath
-
 
 
 

@@ -12,7 +12,7 @@
     "cli"
   ],
   "bin": {
-    "fsw": "./bin/index.js"
+    "fsw": "sudo ./bin/index.js"
   },
   "dependencies": {
     "chalk": "^4.1.2",
